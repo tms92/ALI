@@ -1,0 +1,45 @@
+Metadata-Version: 2.4
+Name: ali
+Version: 0.1.0
+Summary: Assistente Locale Intelligente - Local AI assistant with screen reading and system control capabilities
+Author: tms92
+License: MIT
+Keywords: ai,assistant,local-llm,automation
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: ollama>=0.1.0
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: pydantic-settings>=2.0.0
+Requires-Dist: loguru>=0.7.0
+Requires-Dist: pillow>=10.0.0
+Requires-Dist: mss>=9.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+
+# ALI
+
+Repository personale per progetti e sperimentazioni.
+
+## Setup
+
+```bash
+git clone https://github.com/tms92/ALI.git
+cd ALI
+```
+
+## Struttura
+
+_Da definire in base allo sviluppo del progetto_
+
+## Licenza
+
+_Da definire_

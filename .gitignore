@@ -1,0 +1,79 @@
+# Claude Code files and directories
+.claude/
+.claude_code/
+*.claude
+.ai/
+.aider*
+
+# AI-generated temporary files
+*.ai.tmp
+*.llm.tmp
+
+# Editor and IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Operating System
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Node.js (se userai JavaScript/TypeScript)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.npm
+.yarn/
+
+# Python (se userai Python)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+
+# Build outputs
+dist/
+build/
+*.exe
+*.out
+*.app
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Secrets and credentials
+secrets/
+credentials/
+*.key
+*.pem
+*.cert
