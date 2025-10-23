@@ -1,7 +1,6 @@
 """Main entry point for ALI application."""
 
 import sys
-from pathlib import Path
 
 from loguru import logger
 
@@ -21,7 +20,10 @@ def setup_logging() -> None:
     logger.add(
         sys.stderr,
         level=settings.log_level,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+        format=(
+            "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+            "<level>{level: <8}</level> | <level>{message}</level>"
+        ),
     )
 
     # Add file handler

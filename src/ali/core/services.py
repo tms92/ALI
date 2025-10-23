@@ -3,8 +3,6 @@
 import shutil
 import subprocess
 import time
-from pathlib import Path
-from typing import Optional
 
 import requests
 from loguru import logger
@@ -159,7 +157,7 @@ class OllamaService:
         models = self.list_models()
         return model_name in models
 
-    def suggest_model(self) -> Optional[str]:
+    def suggest_model(self) -> str | None:
         """Suggest a model to use based on what's available.
 
         Returns:
