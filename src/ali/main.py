@@ -88,11 +88,11 @@ def main() -> None:
             model=model_to_use,
         )
 
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("ALI Response:")
-        print("="*50)
+        print("=" * 50)
         print(response)
-        print("="*50 + "\n")
+        print("=" * 50 + "\n")
 
         logger.info("Test completed successfully")
 
