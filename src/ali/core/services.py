@@ -1,5 +1,6 @@
 """Service management for external dependencies."""
 
+import os
 import shutil
 import subprocess
 import time
@@ -70,7 +71,7 @@ class OllamaService:
 
             # Start Ollama serve in background
             # On Windows, use CREATE_NO_WINDOW flag to avoid showing console
-            if subprocess.os.name == "nt":  # Windows
+            if os.name == "nt":  # Windows
                 subprocess.Popen(
                     ["ollama", "serve"],
                     stdout=subprocess.DEVNULL,
@@ -138,7 +139,7 @@ class OllamaService:
         try:
             response = requests.get(f"{self.base_url}/api/tags", timeout=5)
             response.raise_for_status()
-            models = [model["name"] for model in response.json().get("models", [])]
+            models = [model["model"] for model in response.json().get("models", [])]
             logger.debug(f"Found {len(models)} models")
             return models
         except Exception as e:

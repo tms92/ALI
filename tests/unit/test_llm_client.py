@@ -168,9 +168,9 @@ class TestOllamaClient:
         mock_client_class.return_value = mock_client
         mock_client.list.return_value = {
             "models": [
-                {"name": "llama2"},
-                {"name": "llama3"},
-                {"name": "codellama"},
+                {"model": "llama2"},
+                {"model": "llama3"},
+                {"model": "codellama"},
             ]
         }
 

@@ -5,6 +5,7 @@ import sys
 from loguru import logger
 
 from ali.config.settings import get_settings
+from ali.core.onboarding import OnboardingFlow
 from ali.core.services import OllamaService
 from ali.llm.client import OllamaClient
 
@@ -38,6 +39,20 @@ def setup_logging() -> None:
     )
 
 
+def needs_onboarding(settings: "ali.config.settings.AppSettings") -> bool:  # type: ignore[name-defined]  # noqa: F821, E501
+    """Check if user needs to go through onboarding.
+
+    Args:
+        settings: Application settings
+
+    Returns:
+        True if onboarding is needed, False otherwise
+    """
+    # Check if onboarding has been completed (marker file)
+    onboarding_complete_file = settings.config_dir / ".onboarding_complete"
+    return not onboarding_complete_file.exists()
+
+
 def main() -> None:
     """Main application entry point."""
     setup_logging()
@@ -46,58 +61,106 @@ def main() -> None:
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
 
     try:
-        # Initialize Ollama service manager
+        # Check if onboarding is needed
+        if needs_onboarding(settings):
+            logger.info("First-time setup detected, starting onboarding...")
+            onboarding = OnboardingFlow()
+            result = onboarding.run()
+
+            if not result.success:
+                logger.error(f"Onboarding failed: {result.error_message}")
+                print("\n✗ Setup incomplete. Please try again or install Ollama manually.")
+                print("  Visit: https://ollama.com/download\n")
+                sys.exit(1)
+
+            # Mark onboarding as complete
+            onboarding_complete_file = settings.config_dir / ".onboarding_complete"
+            onboarding_complete_file.parent.mkdir(parents=True, exist_ok=True)
+            onboarding_complete_file.write_text("")
+            logger.info("Onboarding completed successfully")
+        else:
+            logger.info("Skipping onboarding (already configured)")
+
+        # Initialize services
         ollama_service = OllamaService(settings.ollama.host)
 
-        # Ensure Ollama is running (auto-start if needed)
-        logger.info("Checking Ollama service...")
+        # Ensure Ollama is running
         if not ollama_service.ensure_running(auto_start=True):
-            logger.error("Failed to start Ollama service")
-            logger.info("Please install Ollama from: https://ollama.com/download")
+            logger.error("Ollama service is not running")
+            print("\n✗ Ollama is not running. Please start it or run setup again.\n")
             sys.exit(1)
 
-        # Check for available models
-        models = ollama_service.list_models()
-        if not models:
-            logger.warning("No models found locally")
-            logger.info("Pulling default model (llama2)...")
-            logger.info("This may take a few minutes on first run...")
-            # Note: We'll add auto-pull in next iteration
-            logger.info("Please run: ollama pull llama2")
-            sys.exit(1)
+        # Determine which model to use
+        preference_file = settings.config_dir / "model_preference.txt"
+        if preference_file.exists():
+            model_to_use = preference_file.read_text().strip()
+            logger.info(f"Using saved preference: {model_to_use}")
+        else:
+            # No preference saved - ask user to select
+            logger.info("No model preference found, asking user to select")
+            from ali.core.hardware import detect_hardware
+            from ali.core.recommendations import get_installed_models, get_model_recommendations
 
-        logger.info(f"Available models: {', '.join(models)}")
+            client = OllamaClient(settings.ollama)
+            hardware = detect_hardware()
+            installed_models = get_installed_models(client)
+            recommendations = get_model_recommendations(hardware, installed_models)
 
-        # Use suggested model or configured default
-        suggested_model = ollama_service.suggest_model()
-        model_to_use = suggested_model or settings.ollama.model
+            # Reuse onboarding flow for selection
+            onboarding = OnboardingFlow()
+            onboarding.display_recommendations(recommendations, hardware)
+            selected = onboarding.select_model_interactive(recommendations)
 
+            if not selected:
+                logger.error("User cancelled model selection")
+                print("\n✗ No model selected. Exiting.\n")
+                sys.exit(1)
+
+            model_to_use = selected
+
+            # Ask if user wants to save this choice
+            if onboarding.ask_save_preference(model_to_use):
+                onboarding.save_preference(model_to_use)
+
+        # Verify model exists
         if not ollama_service.has_model(model_to_use):
-            logger.warning(f"Configured model '{model_to_use}' not found")
-            logger.info(f"Using available model: {suggested_model}")
-            model_to_use = suggested_model
+            logger.warning(f"Preferred model '{model_to_use}' not found")
+            suggested = ollama_service.suggest_model()
+            if not suggested:
+                logger.error("No models available")
+                print("\n✗ No models found. Please run setup or install a model.\n")
+                sys.exit(1)
+            model_to_use = suggested
+            logger.info(f"Falling back to: {model_to_use}")
 
-        # Initialize Ollama client
+        # Initialize client
         client = OllamaClient(settings.ollama)
 
-        # Simple test interaction
-        logger.info(f"Testing with model: {model_to_use}")
+        # Test interaction
+        logger.info(f"Testing ALI with model: {model_to_use}")
+        print("\nAsking ALI to introduce itself...\n")
+
         response = client.chat(
-            message="Hello! Please introduce yourself briefly.",
+            message="Hello! Please introduce yourself briefly in 2-3 sentences.",
             system_prompt="You are ALI, a helpful local AI assistant.",
             model=model_to_use,
         )
 
-        print("\n" + "=" * 50)
-        print("ALI Response:")
-        print("=" * 50)
-        print(response)
-        print("=" * 50 + "\n")
+        print("=" * 70)
+        print("  ALI Response")
+        print("=" * 70)
+        print(f"\n{response}\n")
+        print("=" * 70 + "\n")
 
-        logger.info("Test completed successfully")
+        logger.info("ALI is ready to use!")
+        print("✓ ALI initialized successfully!\n")
 
+    except KeyboardInterrupt:
+        print("\n\nInterrupted by user. Goodbye!\n")
+        sys.exit(0)
     except Exception as e:
-        logger.error(f"Application error: {e}")
+        logger.exception(f"Application error: {e}")
+        print(f"\n✗ Error: {e}\n")
         sys.exit(1)
 
 

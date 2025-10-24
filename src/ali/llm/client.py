@@ -54,7 +54,7 @@ class OllamaClient:
                 messages=messages,
                 options={"temperature": temperature},
             )
-            content = response["message"]["content"]
+            content: str = response["message"]["content"]
             logger.debug(f"Received response ({len(content)} chars)")
             return content
 
@@ -113,23 +113,27 @@ class OllamaClient:
         """
         try:
             response = self.client.list()
-            models = [model["name"] for model in response["models"]]
+            models = [model["model"] for model in response["models"]]
             logger.info(f"Found {len(models)} available models")
             return models
         except Exception as e:
             logger.error(f"Failed to list models: {e}")
             raise
 
-    def pull_model(self, model: str) -> None:
+    def pull_model(self, model: str) -> bool:
         """Pull a model from Ollama library.
 
         Args:
             model: Model name to pull
+
+        Returns:
+            True if pull succeeded, False otherwise
         """
         try:
             logger.info(f"Pulling model: {model}")
             self.client.pull(model)
             logger.info(f"Successfully pulled model: {model}")
+            return True
         except Exception as e:
             logger.error(f"Failed to pull model {model}: {e}")
-            raise
+            return False
