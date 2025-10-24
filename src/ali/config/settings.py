@@ -1,7 +1,6 @@
 """Application settings and configuration management."""
 
 from pathlib import Path
-from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -68,7 +67,7 @@ class AppSettings(BaseSettings):
 
 
 # Global settings instance
-_settings: Optional[AppSettings] = None
+_settings: AppSettings | None = None
 
 
 def get_settings() -> AppSettings:

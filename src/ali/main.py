@@ -1,7 +1,6 @@
 """Main entry point for ALI application."""
 
 import sys
-from pathlib import Path
 
 from loguru import logger
 
@@ -21,7 +20,10 @@ def setup_logging() -> None:
     logger.add(
         sys.stderr,
         level=settings.log_level,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
+        format=(
+            "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+            "<level>{level: <8}</level> | <level>{message}</level>"
+        ),
     )
 
     # Add file handler
@@ -86,11 +88,11 @@ def main() -> None:
             model=model_to_use,
         )
 
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("ALI Response:")
-        print("="*50)
+        print("=" * 50)
         print(response)
-        print("="*50 + "\n")
+        print("=" * 50 + "\n")
 
         logger.info("Test completed successfully")
 

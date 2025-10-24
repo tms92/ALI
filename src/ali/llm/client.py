@@ -1,6 +1,6 @@
 """Ollama LLM client wrapper."""
 
-from typing import AsyncIterator, Optional
+from collections.abc import AsyncIterator
 
 import ollama
 from loguru import logger
@@ -11,7 +11,7 @@ from ali.config.settings import OllamaSettings
 class OllamaClient:
     """Wrapper for Ollama API client."""
 
-    def __init__(self, settings: Optional[OllamaSettings] = None) -> None:
+    def __init__(self, settings: OllamaSettings | None = None) -> None:
         """Initialize Ollama client.
 
         Args:
@@ -24,9 +24,9 @@ class OllamaClient:
     def chat(
         self,
         message: str,
-        model: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        temperature: Optional[float] = None,
+        model: str | None = None,
+        system_prompt: str | None = None,
+        temperature: float | None = None,
     ) -> str:
         """Send a chat message and get response.
 
@@ -65,9 +65,9 @@ class OllamaClient:
     async def chat_stream(
         self,
         message: str,
-        model: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        temperature: Optional[float] = None,
+        model: str | None = None,
+        system_prompt: str | None = None,
+        temperature: float | None = None,
     ) -> AsyncIterator[str]:
         """Send a chat message and stream response.
 

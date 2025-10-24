@@ -59,6 +59,10 @@ htmlcov/
 *.cover
 .hypothesis/
 
+# Linting and formatting
+.ruff_cache/
+.mypy_cache/
+
 # Logs
 logs/
 *.log
