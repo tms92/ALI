@@ -59,9 +59,7 @@ class TestOllamaService:
         assert result is False
 
     @patch("ali.core.services.requests.get")
-    def test_should_detect_running_service(
-        self, mock_get: Mock, service: OllamaService
-    ) -> None:
+    def test_should_detect_running_service(self, mock_get: Mock, service: OllamaService) -> None:
         """Test that is_running returns True when service responds."""
         # Arrange
         mock_response = Mock()
@@ -76,9 +74,7 @@ class TestOllamaService:
         mock_get.assert_called_once_with("http://test:11434/api/tags", timeout=2)
 
     @patch("ali.core.services.requests.get")
-    def test_should_detect_stopped_service(
-        self, mock_get: Mock, service: OllamaService
-    ) -> None:
+    def test_should_detect_stopped_service(self, mock_get: Mock, service: OllamaService) -> None:
         """Test that is_running returns False when service not responding."""
         # Arrange
         mock_get.side_effect = requests.exceptions.ConnectionError()
@@ -104,9 +100,7 @@ class TestOllamaService:
         assert models == []
 
     @patch("ali.core.services.requests.get")
-    def test_should_list_available_models(
-        self, mock_get: Mock, service: OllamaService
-    ) -> None:
+    def test_should_list_available_models(self, mock_get: Mock, service: OllamaService) -> None:
         """Test that list_models returns model names."""
         # Arrange
         mock_response = Mock()
@@ -127,16 +121,12 @@ class TestOllamaService:
         assert models == ["llama2", "llama3", "mistral"]
 
     @patch("ali.core.services.requests.get")
-    def test_should_check_if_model_exists(
-        self, mock_get: Mock, service: OllamaService
-    ) -> None:
+    def test_should_check_if_model_exists(self, mock_get: Mock, service: OllamaService) -> None:
         """Test that has_model correctly identifies available models."""
         # Arrange
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "models": [{"model": "llama2"}, {"model": "mistral"}]
-        }
+        mock_response.json.return_value = {"models": [{"model": "llama2"}, {"model": "mistral"}]}
         mock_get.return_value = mock_response
 
         # Act & Assert
@@ -144,9 +134,7 @@ class TestOllamaService:
         assert service.has_model("llama3") is False
 
     @patch("ali.core.services.requests.get")
-    def test_should_suggest_preferred_model(
-        self, mock_get: Mock, service: OllamaService
-    ) -> None:
+    def test_should_suggest_preferred_model(self, mock_get: Mock, service: OllamaService) -> None:
         """Test that suggest_model prefers llama3 over llama2."""
         # Arrange
         mock_response = Mock()
