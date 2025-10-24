@@ -1,5 +1,6 @@
 """Hardware detection for model recommendations."""
 
+import os
 import platform
 import subprocess
 from dataclasses import dataclass
@@ -106,7 +107,7 @@ def detect_hardware() -> HardwareInfo:
     logger.info("Detecting system hardware...")
 
     total_ram, available_ram = get_ram_info()
-    cpu_count = platform.os.cpu_count() or 1
+    cpu_count = os.cpu_count() or 1
     gpu_available, gpu_name, gpu_vram = get_gpu_info()
 
     hardware = HardwareInfo(

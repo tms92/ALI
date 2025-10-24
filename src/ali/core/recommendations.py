@@ -60,13 +60,16 @@ def get_model_recommendations(
     if installed_models is None:
         installed_models = []
 
-    # Normalize installed model names for comparison
+    # Normalize installed model names for comparison (exact match only)
     installed_set = {model.lower() for model in installed_models}
 
     recommendations = []
     available_ram = hardware.available_ram_gb
+    catalog_models_set = {model_name.lower() for model_name, _, _, _ in AVAILABLE_MODELS}
 
+    # First, add all models from the catalog
     for model_name, size, ram_req, vram_req in AVAILABLE_MODELS:
+        # Check exact match only
         is_installed = model_name.lower() in installed_set
 
         # Determine if model fits
@@ -120,6 +123,53 @@ def get_model_recommendations(
             is_outdated=False,  # Will be set later when checking for updates
         )
         recommendations.append(rec)
+
+    # Second, add installed models that are NOT in the catalog
+    for installed_model in installed_models:
+        if installed_model.lower() not in catalog_models_set:
+            # Model not in catalog - estimate requirements based on name
+            size_str = "Unknown"
+            ram_req = 8.0  # Default estimate
+
+            # Try to parse size from model name (e.g., "llama3.2:3b" -> "3B")
+            if ":1b" in installed_model.lower():
+                size_str, ram_req = "1B", 2.0
+            elif ":3b" in installed_model.lower():
+                size_str, ram_req = "3B", 4.0
+            elif ":7b" in installed_model.lower():
+                size_str, ram_req = "7B", 8.0
+            elif ":8b" in installed_model.lower():
+                size_str, ram_req = "8B", 8.0
+            elif ":13b" in installed_model.lower():
+                size_str, ram_req = "13B", 16.0
+            elif ":70b" in installed_model.lower():
+                size_str, ram_req = "70B", 64.0
+            elif "8x7b" in installed_model.lower():
+                size_str, ram_req = "8x7B", 32.0
+            elif ":12b" in installed_model.lower():
+                size_str, ram_req = "12B", 14.0
+            elif ":34b" in installed_model.lower():
+                size_str, ram_req = "34B", 32.0
+
+            # Estimate if it fits
+            fits = available_ram >= ram_req if not hardware.gpu_available else True
+            tier = "good" if fits else "minimal"
+
+            reason = f"✓ Installed (not in standard catalog) - Estimated {size_str} model"
+            if not fits:
+                reason = f"⚠ Installed but may struggle - Estimated {ram_req:.1f}GB RAM required"
+
+            rec = ModelRecommendation(
+                model_name=installed_model,
+                size=size_str,
+                reason=reason,
+                ram_required_gb=ram_req,
+                fits_hardware=fits,
+                performance_tier=tier,
+                is_installed=True,
+                is_outdated=False,
+            )
+            recommendations.append(rec)
 
     # Sort: installed and fitting first, then fitting, then by tier, then by size
     tier_order = {"optimal": 0, "good": 1, "minimal": 2}

@@ -1,6 +1,6 @@
 """Unit tests for service management."""
 
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
 import pytest
 import requests
@@ -113,9 +113,9 @@ class TestOllamaService:
         mock_response.status_code = 200
         mock_response.json.return_value = {
             "models": [
-                {"name": "llama2"},
-                {"name": "llama3"},
-                {"name": "mistral"},
+                {"model": "llama2"},
+                {"model": "llama3"},
+                {"model": "mistral"},
             ]
         }
         mock_get.return_value = mock_response
@@ -135,7 +135,7 @@ class TestOllamaService:
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
-            "models": [{"name": "llama2"}, {"name": "mistral"}]
+            "models": [{"model": "llama2"}, {"model": "mistral"}]
         }
         mock_get.return_value = mock_response
 
@@ -153,9 +153,9 @@ class TestOllamaService:
         mock_response.status_code = 200
         mock_response.json.return_value = {
             "models": [
-                {"name": "llama2"},
-                {"name": "llama3.1"},
-                {"name": "mistral"},
+                {"model": "llama2"},
+                {"model": "llama3.1"},
+                {"model": "mistral"},
             ]
         }
         mock_get.return_value = mock_response

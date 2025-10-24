@@ -77,7 +77,8 @@ def test_get_model_recommendations_cpu_only(hardware_cpu_only: HardwareInfo) -> 
 def test_get_model_recommendations_with_installed(hardware_cpu_only: HardwareInfo) -> None:
     """Test model recommendations with some models already installed."""
     # Arrange
-    installed_models = ["llama3.2:3b", "llama3.1:8b"]
+    # Use different model families to avoid base name matching
+    installed_models = ["mistral:7b", "phi3:3b"]
 
     # Act
     recommendations = get_model_recommendations(hardware_cpu_only, installed_models)
@@ -85,6 +86,8 @@ def test_get_model_recommendations_with_installed(hardware_cpu_only: HardwareInf
     # Assert
     installed_recs = [r for r in recommendations if r.is_installed]
     assert len(installed_recs) == 2
+    assert any(r.model_name == "mistral:7b" for r in installed_recs)
+    assert any(r.model_name == "phi3:3b" for r in installed_recs)
     # Installed models should be sorted first (among fitting models)
     fitting = [r for r in recommendations if r.fits_hardware]
     if len(fitting) >= 2:
@@ -272,7 +275,8 @@ def test_model_recommendation_dataclass() -> None:
 def test_case_insensitive_matching(hardware_cpu_only: HardwareInfo) -> None:
     """Test that model matching is case-insensitive."""
     # Arrange
-    installed_models = ["LLAMA3.2:3B", "Llama3.1:8b"]
+    # Use different model families to avoid base name matching
+    installed_models = ["MISTRAL:7B", "Phi3:3b"]
 
     # Act
     recommendations = get_model_recommendations(hardware_cpu_only, installed_models)
@@ -281,6 +285,8 @@ def test_case_insensitive_matching(hardware_cpu_only: HardwareInfo) -> None:
     installed_recs = [r for r in recommendations if r.is_installed]
     # Should match despite different case
     assert len(installed_recs) == 2
+    assert any(r.model_name == "mistral:7b" for r in installed_recs)
+    assert any(r.model_name == "phi3:3b" for r in installed_recs)
 
 
 def test_get_model_recommendations_none_installed(hardware_cpu_only: HardwareInfo) -> None:

@@ -253,16 +253,43 @@ class OnboardingFlow:
             print(f"✗ Error downloading model: {e}\n")
             return False
 
+    def ask_save_preference(self, model_name: str) -> bool:
+        """Ask user if they want to save model as default.
+
+        Args:
+            model_name: Selected model name
+
+        Returns:
+            True if user wants to save preference, False otherwise
+        """
+        print(f"\nAlways use '{model_name}' on startup?")
+        print("If yes, ALI will use this model automatically.")
+        print("If no, you'll be asked to choose a model each time.\n")
+
+        while True:
+            response = input("Save as default? [Y/n]: ").strip().lower()
+            if response in ["y", "yes", ""]:
+                return True
+            elif response in ["n", "no"]:
+                return False
+            else:
+                print("Please answer 'y' (yes) or 'n' (no)")
+
     def save_preference(self, model_name: str) -> None:
         """Save user's model preference to config.
 
         Args:
             model_name: Selected model name
         """
-        # TODO: Implement config persistence
-        # For now, just log
+        from ali.config.settings import get_settings
+
+        settings = get_settings()
+        preference_file = settings.config_dir / "model_preference.txt"
+        preference_file.parent.mkdir(parents=True, exist_ok=True)
+        preference_file.write_text(model_name)
+
         logger.info(f"User preference saved: {model_name}")
-        print(f"✓ Preference saved: {model_name} will be used as default model\n")
+        print(f"\n✓ Saved: '{model_name}' will be used as default model\n")
 
     def run(self) -> OnboardingResult:
         """Run complete onboarding flow.
@@ -331,8 +358,12 @@ class OnboardingFlow:
                 error_message=f"Failed to download model: {selected_model}",
             )
 
-        # Step 7: Save preference
-        self.save_preference(selected_model)
+        # Step 7: Ask if user wants to save preference
+        if self.ask_save_preference(selected_model):
+            self.save_preference(selected_model)
+        else:
+            logger.info("User declined to save preference")
+            print("\n✓ Not saved. You'll choose a model each time ALI starts.\n")
 
         print("=" * 70)
         print("  Onboarding Complete! ALI is ready to use.")

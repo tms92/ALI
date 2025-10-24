@@ -54,7 +54,7 @@ class OllamaClient:
                 messages=messages,
                 options={"temperature": temperature},
             )
-            content = response["message"]["content"]
+            content: str = response["message"]["content"]
             logger.debug(f"Received response ({len(content)} chars)")
             return content
 
@@ -113,7 +113,7 @@ class OllamaClient:
         """
         try:
             response = self.client.list()
-            models = [model["name"] for model in response["models"]]
+            models = [model["model"] for model in response["models"]]
             logger.info(f"Found {len(models)} available models")
             return models
         except Exception as e:
