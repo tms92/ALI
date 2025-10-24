@@ -112,7 +112,7 @@ See open [issues](https://github.com/tms92/ALI/issues) for planned features and 
 Current roadmap:
 - [x] Foundation and Ollama integration
 - [x] CI/CD pipeline
-- [ ] Smart onboarding ([#1](https://github.com/tms92/ALI/issues/1))
+- [x] Smart onboarding ([#1](https://github.com/tms92/ALI/issues/1))
 - [ ] Screen reading ([#3](https://github.com/tms92/ALI/issues/3))
 - [ ] System control ([#4](https://github.com/tms92/ALI/issues/4))
 - [ ] Desktop GUI ([#5](https://github.com/tms92/ALI/issues/5))

@@ -7,15 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### In Progress
-- Smart onboarding flow (#1)
-- Ollama auto-installer
-- Model recommendations system
-- Interactive model selection
-
 ## [0.1.0] - TBD
 
 ### Added
+- Smart onboarding flow with interactive model selection (#1)
+- Ollama auto-installer with cross-platform support
 - Initial project structure
 - Python package configuration with pyproject.toml
 - Pydantic-based settings system
