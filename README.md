@@ -3,21 +3,35 @@
 [![Tests](https://github.com/tms92/ALI/actions/workflows/test.yml/badge.svg)](https://github.com/tms92/ALI/actions/workflows/test.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-Local AI assistant with screen reading and system control capabilities.
+Local AI assistant with smart onboarding and Ollama integration (in active development).
 
-## Features
+## Why ALI?
 
-- 🤖 **Local LLM integration** via Ollama with automatic service management
-- 🔧 **Auto-start Ollama** - ALI detects and starts Ollama automatically
-- ⚙️ **Smart model selection** - Recommends models based on your hardware
-- 💬 **Text-based interaction** - Clean conversational interface
+ALI makes local Large Language Models accessible to everyone, regardless of technical expertise. By running AI models entirely on your own machine, you can:
+
+- **Protect your privacy** - Work with sensitive personal data without sending it to external servers
+- **Maintain control** - Your conversations, documents, and information never leave your device
+- **Break down barriers** - No technical knowledge required - ALI handles setup and configuration automatically
+- **Use AI confidently** - No subscription fees, no data collection, no privacy concerns
+
+Whether you're handling medical records, financial documents, or personal communications, ALI ensures your data stays private while giving you access to powerful AI capabilities.
+
+## Current Features
+
+- 🚀 **Smart onboarding** - First-run setup that guides you through installation
+- 🤖 **Ollama auto-installer** - Detects and installs Ollama automatically (Linux)
+- 💻 **Hardware detection** - Detects CPU, RAM, and GPU capabilities
+- ⚙️ **Smart model selection** - Recommends appropriate models for your hardware
+- 🔧 **Auto-start Ollama** - Detects and starts Ollama service automatically
 - 🔒 **Fully local and private** - Your data never leaves your machine
-- 🧪 **Comprehensive testing** - 32 tests with 55% coverage
+- 🧪 **Comprehensive testing** - 91 tests with 58% coverage
 
-### Planned Features
-- 👁️ Screen reading capabilities ([#3](https://github.com/tms92/ALI/issues/3))
-- 🎮 System control and automation ([#4](https://github.com/tms92/ALI/issues/4))
-- 🖥️ Desktop GUI with system tray ([#5](https://github.com/tms92/ALI/issues/5))
+## In Development
+
+- 💬 **Interactive chat** - Conversational interface ([#9](https://github.com/tms92/ALI/issues/9))
+- 👁️ **Screen reading** - Capture and analyze screen content ([#3](https://github.com/tms92/ALI/issues/3))
+- 🎮 **System control** - Keyboard/mouse automation ([#4](https://github.com/tms92/ALI/issues/4))
+- 🖥️ **Desktop GUI** - System tray and overlay interface ([#5](https://github.com/tms92/ALI/issues/5))
 
 ## Requirements
 
@@ -78,13 +92,20 @@ python -m ali.main
 ```
 ali/
 ├── src/ali/
-│   ├── config/       # Configuration management
-│   ├── core/         # Core functionality
-│   ├── llm/          # LLM integration
-│   ├── vision/       # Screen reading (planned)
-│   └── control/      # System control (planned)
-├── tests/            # Test suite
-└── pyproject.toml    # Project configuration
+│   ├── config/           # Configuration management
+│   ├── core/             # Core functionality
+│   │   ├── hardware.py   # Hardware detection (CPU, RAM, GPU)
+│   │   ├── installer.py  # Ollama installer utilities
+│   │   ├── onboarding.py # Interactive onboarding flow
+│   │   ├── recommendations.py # Model recommendation system
+│   │   └── services.py   # Ollama service management
+│   ├── llm/              # LLM integration
+│   │   └── client.py     # Ollama client wrapper
+│   ├── vision/           # Screen reading (planned)
+│   └── control/          # System control (planned)
+├── tests/
+│   └── unit/             # Unit tests (91 tests, 58% coverage)
+└── pyproject.toml        # Project configuration
 ```
 
 ## Development
@@ -111,8 +132,9 @@ See open [issues](https://github.com/tms92/ALI/issues) for planned features and 
 
 Current roadmap:
 - [x] Foundation and Ollama integration
-- [x] CI/CD pipeline
+- [x] CI/CD pipeline ([#2](https://github.com/tms92/ALI/issues/2))
 - [x] Smart onboarding ([#1](https://github.com/tms92/ALI/issues/1))
+- [ ] Interactive chat ([#9](https://github.com/tms92/ALI/issues/9))
 - [ ] Screen reading ([#3](https://github.com/tms92/ALI/issues/3))
 - [ ] System control ([#4](https://github.com/tms92/ALI/issues/4))
 - [ ] Desktop GUI ([#5](https://github.com/tms92/ALI/issues/5))
