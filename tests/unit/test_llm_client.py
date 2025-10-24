@@ -58,9 +58,7 @@ class TestOllamaClient:
         # Arrange
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
-        mock_client.chat.return_value = {
-            "message": {"content": "Test response"}
-        }
+        mock_client.chat.return_value = {"message": {"content": "Test response"}}
 
         client = OllamaClient(settings)
 
@@ -83,9 +81,7 @@ class TestOllamaClient:
         # Arrange
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
-        mock_client.chat.return_value = {
-            "message": {"content": "Test response"}
-        }
+        mock_client.chat.return_value = {"message": {"content": "Test response"}}
 
         client = OllamaClient(settings)
 
@@ -108,9 +104,7 @@ class TestOllamaClient:
         # Arrange
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
-        mock_client.chat.return_value = {
-            "message": {"content": "Test response"}
-        }
+        mock_client.chat.return_value = {"message": {"content": "Test response"}}
 
         client = OllamaClient(settings)
 
@@ -129,9 +123,7 @@ class TestOllamaClient:
         # Arrange
         mock_client = MagicMock()
         mock_client_class.return_value = mock_client
-        mock_client.chat.return_value = {
-            "message": {"content": "Test response"}
-        }
+        mock_client.chat.return_value = {"message": {"content": "Test response"}}
 
         client = OllamaClient(settings)
 
@@ -184,9 +176,7 @@ class TestOllamaClient:
         mock_client.list.assert_called_once()
 
     @patch("ali.llm.client.ollama.Client")
-    def test_should_pull_model(
-        self, mock_client_class: Mock, settings: OllamaSettings
-    ) -> None:
+    def test_should_pull_model(self, mock_client_class: Mock, settings: OllamaSettings) -> None:
         """Test that pull_model calls ollama pull."""
         # Arrange
         mock_client = MagicMock()

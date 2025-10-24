@@ -136,24 +136,82 @@ def main() -> None:
         # Initialize client
         client = OllamaClient(settings.ollama)
 
-        # Test interaction
-        logger.info(f"Testing ALI with model: {model_to_use}")
-        print("\nAsking ALI to introduce itself...\n")
+        # Start interactive chat session
+        logger.info(f"Starting chat session with model: {model_to_use}")
+        from ali.core.chat import ChatSession
 
-        response = client.chat(
-            message="Hello! Please introduce yourself briefly in 2-3 sentences.",
-            system_prompt="You are ALI, a helpful local AI assistant.",
+        session = ChatSession(
+            client=client,
             model=model_to_use,
+            system_prompt="You are ALI, a helpful local AI assistant.",
         )
 
+        # Welcome message
+        print("\n" + "=" * 70)
+        print("  ALI - Assistente Locale Intelligente")
         print("=" * 70)
-        print("  ALI Response")
-        print("=" * 70)
-        print(f"\n{response}\n")
+        print(f"\n✓ Connected to model: {model_to_use}")
+        print("  Type /help for available commands, /exit to quit\n")
         print("=" * 70 + "\n")
 
-        logger.info("ALI is ready to use!")
-        print("✓ ALI initialized successfully!\n")
+        # Interactive chat loop
+        while True:
+            try:
+                user_input = input("You: ").strip()
+
+                if not user_input:
+                    continue
+
+                # Handle commands
+                if session.is_command(user_input):
+                    command_data = session.parse_command(user_input)
+                    command = command_data["command"]
+                    args = command_data["args"]
+
+                    if command in ["exit", "quit"]:
+                        print("\nGoodbye!\n")
+                        break
+
+                    elif command == "help":
+                        print(f"\n{session.get_help()}\n")
+                        continue
+
+                    elif command == "clear":
+                        session.clear_history()
+                        print("\n✓ Conversation history cleared.\n")
+                        continue
+
+                    elif command == "model":
+                        if not args:
+                            print("\n✗ Please specify a model name: /model <name>\n")
+                            continue
+                        new_model = args[0]
+                        if ollama_service.has_model(new_model):
+                            session.change_model(new_model)
+                            print(f"\n✓ Switched to model: {new_model}\n")
+                        else:
+                            print(f"\n✗ Model '{new_model}' not found.\n")
+                        continue
+
+                    elif command == "history":
+                        print(f"\n{session.format_history()}\n")
+                        continue
+
+                    else:
+                        print(f"\n✗ Unknown command: {user_input}")
+                        print("  Type /help for available commands.\n")
+                        continue
+
+                # Send regular message
+                response = session.send_message(user_input)
+                print(f"\nALI: {response}\n")
+
+            except EOFError:
+                # Handle Ctrl+D (Unix) or Ctrl+Z (Windows)
+                print("\n\nGoodbye!\n")
+                break
+
+        logger.info("Chat session ended")
 
     except KeyboardInterrupt:
         print("\n\nInterrupted by user. Goodbye!\n")
