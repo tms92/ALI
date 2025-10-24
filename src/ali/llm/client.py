@@ -120,16 +120,20 @@ class OllamaClient:
             logger.error(f"Failed to list models: {e}")
             raise
 
-    def pull_model(self, model: str) -> None:
+    def pull_model(self, model: str) -> bool:
         """Pull a model from Ollama library.
 
         Args:
             model: Model name to pull
+
+        Returns:
+            True if pull succeeded, False otherwise
         """
         try:
             logger.info(f"Pulling model: {model}")
             self.client.pull(model)
             logger.info(f"Successfully pulled model: {model}")
+            return True
         except Exception as e:
             logger.error(f"Failed to pull model {model}: {e}")
-            raise
+            return False
